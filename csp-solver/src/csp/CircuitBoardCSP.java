@@ -51,7 +51,7 @@ public class CircuitBoardCSP extends ConstraintSatisfactionProblem {
 	@Override
 	protected void buildConstraints() {
 		// TODO Auto-generated method stub
-		return null;
+
 	}
 
 }

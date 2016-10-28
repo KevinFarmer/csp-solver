@@ -7,19 +7,18 @@ public class Constraint {
 	
 	//protected Hashtable<int[], List<int[]>> constraints;
 	
-	List<int[]> constraints;
+	Hashtable<int[], List<int[]>> constraints;
 	int numVar, numVal;
 	
-	public Constraint(int[] pair, List<int[]> values) {
-		
-		
+	public Constraint(Hashtable<int[], List<int[]>> allConsts) {
+		constraints = allConsts;
 		
 		
 	}
 	
 	
-	//Args: a pair of variables and their assigned values
-	public boolean isSatisfied(int[] vars, int[] vals) {
+	//Args: the current assignment, the variable that was just updated
+	public boolean isSatisfied(int[] assignment, int var) {
 		
 		
 		

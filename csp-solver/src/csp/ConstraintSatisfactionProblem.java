@@ -10,10 +10,10 @@ public abstract class ConstraintSatisfactionProblem {
 	protected boolean mrv, lcv, mac3; //Whether or not to use these
 	//Minimum remaining value, least-constraining value, and AC-3 algorithm
 	
-	protected int[] variables, values;
+	//protected int[] variables, values;
 	protected int numVar, numVal;
 
-	protected Hashtable<int[], Constraint> constraints;
+	Constraint allConstraints;
 	
 	
 	// Return a valid assignment, or null if none can be found
@@ -21,16 +21,19 @@ public abstract class ConstraintSatisfactionProblem {
 		
 		buildConstraints();
 		
+		if (true)
+			return null;
+		
 		int[] assignment = new int[numVar];
 		for (int i = 0; i < numVar; i++)
 			assignment[i] = UNASSIGNED;
 		
-		recursiveBacktrackSolver(assignment, 0);
-		
-		return new int[2];
+		return recursiveBacktrackSolver(assignment, 0);
+
 	}
 
 
+	//A recursive DFS through the search tree
 	private int[] recursiveBacktrackSolver(int[] assignment, int totalAssigned) {
 		
 		if (totalAssigned == numVar) {
@@ -50,16 +53,16 @@ public abstract class ConstraintSatisfactionProblem {
 			if (lcv)
 				value = getLeastConstrainingVal(assignment, varToAssign);
 			else
-				value = values[i];
+				value = i;
 			
 			assignment[varToAssign] = value;
 			
 			
 			//If this assignment is not valid, then do not recurse
 			
-			//if (!constraints.isSatisfied(assignment, varToAssign);
-			//		continue;
-
+			if ( !allConstraints.isSatisfied(assignment, varToAssign) )
+				continue;
+				
 			
 			int[] sol = recursiveBacktrackSolver(assignment, totalAssigned+1);
 			if (sol != null)
@@ -97,6 +100,7 @@ public abstract class ConstraintSatisfactionProblem {
 	}
 
 
+	//Must create a Constraint and assign it to allConstraints
 	protected abstract void buildConstraints();	
 	
 }
