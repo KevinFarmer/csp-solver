@@ -11,8 +11,8 @@ public class CircuitBoardCSP extends ConstraintSatisfactionProblem {
 		width = w;
 		height = h;
 		
-		int numVal = width * height;
-		int numVar = numCircuits;
+		numVal = width * height;
+		numVar = numCircuits;
 		
 	}
 	
@@ -52,6 +52,12 @@ public class CircuitBoardCSP extends ConstraintSatisfactionProblem {
 	protected void buildConstraints() {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	protected void printAssignment() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

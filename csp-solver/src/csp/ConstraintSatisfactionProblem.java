@@ -21,8 +21,8 @@ public abstract class ConstraintSatisfactionProblem {
 		
 		buildConstraints();
 		
-		if (true)
-			return null;
+		//if (true)
+		//	return null;
 		
 		int[] assignment = new int[numVar];
 		for (int i = 0; i < numVar; i++)
@@ -102,5 +102,7 @@ public abstract class ConstraintSatisfactionProblem {
 
 	//Must create a Constraint and assign it to allConstraints
 	protected abstract void buildConstraints();	
+	
+	protected abstract void printAssignment();
 	
 }

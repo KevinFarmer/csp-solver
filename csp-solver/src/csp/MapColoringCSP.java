@@ -81,4 +81,12 @@ public class MapColoringCSP extends ConstraintSatisfactionProblem {
 		return false;
 	}
 
+
+
+	@Override
+	protected void printAssignment() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }
