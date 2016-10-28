@@ -42,8 +42,9 @@ public class CspDriver {
 		
 		int[] sol = csp.solve();
 		
-		
-		
+		for (int i = 0; i < sol.length; i++)
+			System.out.print(i+" ");
+		System.out.println();
 		
 		
 	}

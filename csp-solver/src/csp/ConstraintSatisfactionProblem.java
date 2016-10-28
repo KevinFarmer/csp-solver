@@ -47,6 +47,8 @@ public abstract class ConstraintSatisfactionProblem {
 		else
 			varToAssign = getNextVar(assignment);
 		
+		System.out.println("---  "+varToAssign);
+		
 		//Assign value to variable
 		int value;
 		for (int i = 0; i < numVal; i++) {
@@ -79,7 +81,7 @@ public abstract class ConstraintSatisfactionProblem {
 	//Returns the next variable sequentially
 	private int getNextVar(int[] assignment) {
 		for (int i = 0; i < numVar; i++)
-			if (assignment[i] != UNASSIGNED) {
+			if (assignment[i] == UNASSIGNED) {
 				return i;
 		}
 		return -1;
