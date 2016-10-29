@@ -55,7 +55,7 @@ public class CircuitBoardCSP extends ConstraintSatisfactionProblem {
 	}
 
 	@Override
-	protected void printAssignment() {
+	protected void printAssignment(int[] assignment) {
 		// TODO Auto-generated method stub
 		
 	}

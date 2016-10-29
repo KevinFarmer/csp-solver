@@ -5,7 +5,7 @@ import java.util.Hashtable;
 
 public abstract class ConstraintSatisfactionProblem {
 
-	private int UNASSIGNED = -1;
+	protected int UNASSIGNED = -1;
 	
 	protected boolean mrv, lcv, mac3; //Whether or not to use these
 	//Minimum remaining value, least-constraining value, and AC-3 algorithm
@@ -28,6 +28,10 @@ public abstract class ConstraintSatisfactionProblem {
 		for (int i = 0; i < numVar; i++)
 			assignment[i] = UNASSIGNED;
 		
+		for (int j = 0; j < numVar; j++)
+			System.out.println(assignment[j] +" ");
+		System.out.println("\n");
+		
 		return recursiveBacktrackSolver(assignment, 0);
 
 	}
@@ -35,6 +39,7 @@ public abstract class ConstraintSatisfactionProblem {
 
 	//A recursive DFS through the search tree
 	private int[] recursiveBacktrackSolver(int[] assignment, int totalAssigned) {
+		System.out.println("Recurse");
 		
 		if (totalAssigned == numVar) {
 			System.out.println("Found solution");
@@ -47,11 +52,12 @@ public abstract class ConstraintSatisfactionProblem {
 		else
 			varToAssign = getNextVar(assignment);
 		
-		System.out.println("---  "+varToAssign);
+		System.out.println("varToAssign:  "+varToAssign);
 		
 		//Assign value to variable
 		int value;
 		for (int i = 0; i < numVal; i++) {
+			//System.out.println(i);
 			if (lcv)
 				value = getLeastConstrainingVal(assignment, varToAssign);
 			else
@@ -59,16 +65,24 @@ public abstract class ConstraintSatisfactionProblem {
 			
 			assignment[varToAssign] = value;
 			
+			for (int j = 0; j < numVar; j++)
+				System.out.print(assignment[j] +" ");
+			System.out.println();
 			
 			//If this assignment is not valid, then do not recurse
 			
-			if ( !allConstraints.isSatisfied(assignment, varToAssign) )
+			if ( !allConstraints.isSatisfied(assignment, varToAssign) ) {
+				//assignment[varToAssign] = UNASSIGNED;
+				System.out.println();
 				continue;
+			}
 				
 			
 			int[] sol = recursiveBacktrackSolver(assignment, totalAssigned+1);
 			if (sol != null)
 				return sol;
+			
+			System.out.println();
 		}
 		
 		
@@ -104,7 +118,6 @@ public abstract class ConstraintSatisfactionProblem {
 
 	//Must create a Constraint and assign it to allConstraints
 	protected abstract void buildConstraints();	
-	
-	protected abstract void printAssignment();
+	protected abstract void printAssignment(int[] assignment);
 	
 }
