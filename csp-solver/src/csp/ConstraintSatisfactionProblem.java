@@ -1,7 +1,10 @@
 package csp;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Hashtable;
+import java.util.Set;
 
 public abstract class ConstraintSatisfactionProblem {
 
@@ -14,6 +17,7 @@ public abstract class ConstraintSatisfactionProblem {
 	protected int numVar, numVal;
 
 	Constraint allConstraints;
+	HashMap<Integer, Set<Integer>> possValues;
 	
 	
 	// Return a valid assignment, or null if none can be found
@@ -28,9 +32,11 @@ public abstract class ConstraintSatisfactionProblem {
 		for (int i = 0; i < numVar; i++)
 			assignment[i] = UNASSIGNED;
 		
-		for (int j = 0; j < numVar; j++)
-			System.out.println(assignment[j] +" ");
-		System.out.println("\n");
+		//for (int j = 0; j < numVar; j++)
+		//	System.out.println(assignment[j] +" ");
+		//System.out.println("\n");
+		
+		HashMap<Integer, Set<Integer>> domains = (HashMap<Integer, Set<Integer>> ) possValues.clone();
 		
 		return recursiveBacktrackSolver(assignment, 0);
 
@@ -39,7 +45,7 @@ public abstract class ConstraintSatisfactionProblem {
 
 	//A recursive DFS through the search tree
 	private int[] recursiveBacktrackSolver(int[] assignment, int totalAssigned) {
-		System.out.println("Recurse");
+		//System.out.println("Recurse");
 		
 		if (totalAssigned == numVar) {
 			System.out.println("Found solution");
@@ -52,7 +58,7 @@ public abstract class ConstraintSatisfactionProblem {
 		else
 			varToAssign = getNextVar(assignment);
 		
-		System.out.println("varToAssign:  "+varToAssign);
+		//System.out.println("varToAssign:  "+varToAssign);
 		
 		//Assign value to variable
 		int value;
@@ -65,24 +71,25 @@ public abstract class ConstraintSatisfactionProblem {
 			
 			assignment[varToAssign] = value;
 			
-			for (int j = 0; j < numVar; j++)
-				System.out.print(assignment[j] +" ");
-			System.out.println();
+			//for (int j = 0; j < numVar; j++)
+			//	System.out.print(assignment[j] +" ");
+			//System.out.println();
 			
 			//If this assignment is not valid, then do not recurse
 			
 			if ( !allConstraints.isSatisfied(assignment, varToAssign) ) {
 				//assignment[varToAssign] = UNASSIGNED;
-				System.out.println();
+				//System.out.println();
 				continue;
 			}
-				
+			
+			
 			
 			int[] sol = recursiveBacktrackSolver(assignment, totalAssigned+1);
 			if (sol != null)
 				return sol;
 			
-			System.out.println();
+			//System.out.println();
 		}
 		
 		
@@ -105,7 +112,23 @@ public abstract class ConstraintSatisfactionProblem {
 	//Returns the unassigned variable with the minimum remaining values
 	private int getMrvVar(int[] assignment) {
 		// TODO Auto-generated method stub
-		return 0;
+		int var = 0;
+		int num;
+		int min = Integer.MAX_VALUE;
+		
+		for (int i = 0; i<numVar; i++) {
+			if (assignment[i] != UNASSIGNED)
+				continue;
+			
+			Set<Integer> vals = possValues.get(i);
+			num = vals.size();
+			if (num < min) {
+				min = num;
+				var = i;
+			}
+		}
+		System.out.println(min+": "+var);
+		return var;
 	}
 	
 	

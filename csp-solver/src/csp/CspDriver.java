@@ -68,22 +68,28 @@ public class CspDriver {
 		colors.add("g");
 		colors.add("b");
 
-		ConstraintSatisfactionProblem csp = new MapColoringCSP(countries, colors, adjList, false, false, false);
+		boolean mrv = true;
+		boolean lcv = false;
+		boolean ac3 = false;
+		
+		long start, end;
+		int[] sol;
 		
 		
-		int[] sol = csp.solve();
-		
-		System.out.println();
-		
+		//With MRV
+		start = System.nanoTime();
+		ConstraintSatisfactionProblem csp2 = new MapColoringCSP(countries, colors, adjList, mrv, lcv, ac3);
+		sol = csp2.solve();
+		end = System.nanoTime();
+		System.out.println("\nTime(ns): "+(end-start));
 		if (sol == null) {
 			System.out.println("Failed!");
 			return;
 		} else {
-			csp.printAssignment(sol);
-		}
-		
-		//for (int i = 0; i < sol.length; i++)
-		//	System.out.print(sol[i]+" ");
+			System.out.println("MRV: "+mrv+",  LCV: "+lcv+",  AC-3: "+ac3);
+			csp2.printAssignment(sol);
+		}		
+
 		
 	}
 	
