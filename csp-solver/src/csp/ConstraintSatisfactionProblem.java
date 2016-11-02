@@ -17,13 +17,12 @@ public abstract class ConstraintSatisfactionProblem {
 	protected int UNASSIGNED = -1;
 	
 	protected boolean mrv, lcv, mac3; //Whether or not to use these
-	//Minimum remaining value, least-constraining value, and AC-3 algorithm
+	//Minimum remaining value, least-constraining value, and MAC-3 algorithm
 	
 	protected int numVar, numVal;
 
 	Constraint allConstraints;
 	HashMap<Integer, List<Integer>> domains;
-	//HashMap<Integer, List<Integer>> adjList;
 	
 	
 	// Return a valid assignment, or null if none can be found

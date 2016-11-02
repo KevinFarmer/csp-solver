@@ -77,7 +77,7 @@ public class MapColoringCSP extends ConstraintSatisfactionProblem {
 	
 	@Override
 	protected void buildConstraints() {
-		HashMap<Pair, HashSet<Pair>> constraints = new HashMap<Pair, HashSet<Pair>>();;
+		HashMap<Pair, HashSet<Pair>> constraints = new HashMap<Pair, HashSet<Pair>>();
 		
 		//For each pair of variables, build a constraint
 		for (int i = 0; i < numVar; i++) {

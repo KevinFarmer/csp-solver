@@ -70,7 +70,7 @@ public class CspDriver {
 
 		boolean mrv = false;
 		boolean lcv = false;
-		boolean ac3 = true;
+		boolean ac3 = false;
 		
 		long start, end;
 		int[] sol;
@@ -89,6 +89,21 @@ public class CspDriver {
 			csp2.printAssignment(sol);
 		}		
 
+		
+		System.out.println();
+		int w = 4, h = 4;
+		int num = 2;
+		Pair[] circuits = new Pair[num];
+		circuits[0] = new Pair(2, 2);
+		circuits[1] = new Pair(3, 1);
+		//circuits[2] = new Pair(1, 4);
+		
+		ConstraintSatisfactionProblem csp = 
+				new CircuitBoardCSP(w, h, circuits, num, mrv, lcv, ac3);
+		
+		System.out.println("----------------------------------------------------------");
+		int[] ret = csp.solve();
+		csp.printAssignment(ret);
 		
 	}
 	
