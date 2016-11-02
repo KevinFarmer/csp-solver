@@ -5,21 +5,27 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
-import java.util.Set;
 
 public class MapColoringCSP extends ConstraintSatisfactionProblem {
 
 	private ArrayList<String> variableList;
 	private ArrayList<String> colorList;
-	private Hashtable<String, List<String>> adjList;
+	private Hashtable<String, List<String>> borders;
+	//private HashMap<String, Integer> countryToInt;
 	
 	
-	public MapColoringCSP(ArrayList<String> countries, ArrayList<String> colors, Hashtable<String, List<String>> borders,
+	public MapColoringCSP(ArrayList<String> countries, ArrayList<String> colors, Hashtable<String, List<String>> brdrs,
 			boolean mrv, boolean lcv, boolean mac3) {
+		
+		/*
+		countryToInt = new HashMap<String, Integer>();
+		for (int i = 0; i < countries.size(); i++) {
+			countryToInt.put(countries.get(i), i);
+		} */
 		
 		variableList = countries;
 		colorList = colors;
-		adjList = borders;
+		borders = brdrs;
 		
 		numVar = countries.size();
 		numVal = colors.size();
@@ -30,15 +36,28 @@ public class MapColoringCSP extends ConstraintSatisfactionProblem {
 		super.lcv = lcv;
 		super.mac3 = mac3;
 		
-		//variables = new int[numVar];
-		//values = new int[numVal];
+		/*
+		//Create adjacency list of ints
+		adjList = new HashMap<Integer, List<Integer>>();
+		Iterator<String> iter = borders.keySet().iterator();
+		while (iter.hasNext()) {
+			int var = countryToInt.get(iter.next());
+			List<String> neighbors = borders.get(var);
+			
+			List<Integer> adj = new ArrayList<Integer>();
+			for (String neighbor : neighbors) {
+				adj.add(countryToInt.get(neighbor));
+			}
+			adjList.put(var, adj);
+		}
+		*/
 		
-		possValues = new HashMap<Integer, Set<Integer>>();
+		domains = new HashMap<Integer, List<Integer>>();
 		for (int i = 0; i < numVar; i++) {
-			Set<Integer> vals = new HashSet<Integer>();
+			List<Integer> vals = new ArrayList<Integer>();
 			for (int j = 0; j < numVal; j++)
 				vals.add(j);
-			possValues.put(i, vals);
+			domains.put(i, vals);
 		}
 		
 	}
@@ -65,10 +84,11 @@ public class MapColoringCSP extends ConstraintSatisfactionProblem {
 			for (int j = 0; j < numVar; j++) {
 				
 				
-				String c1 = variableList.get(i);
-				String c2 = variableList.get(j);
+				//String c1 = variableList.get(i);
+				//String c2 = variableList.get(j);
 				//System.out.println(c1 +"  "+c2);
-				List<String> adj = adjList.get(variableList.get(i));
+				
+				List<String> adj = borders.get(variableList.get(i));
 				if (!adj.contains(variableList.get(j)))
 					continue;
 				
@@ -107,7 +127,7 @@ public class MapColoringCSP extends ConstraintSatisfactionProblem {
 		//If they do not border each other, they can be the same color
 		String c1 = variableList.get(vars.getV1());
 		String c2 = variableList.get(vars.getV2());
-		List<String> adj = adjList.get(c1);
+		List<String> adj = borders.get(c1);
 		if (!adj.contains(c2))
 			return true;
 

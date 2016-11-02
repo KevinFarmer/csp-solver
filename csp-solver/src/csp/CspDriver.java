@@ -68,15 +68,14 @@ public class CspDriver {
 		colors.add("g");
 		colors.add("b");
 
-		boolean mrv = true;
+		boolean mrv = false;
 		boolean lcv = false;
-		boolean ac3 = false;
+		boolean ac3 = true;
 		
 		long start, end;
 		int[] sol;
 		
-		
-		//With MRV
+		//With none
 		start = System.nanoTime();
 		ConstraintSatisfactionProblem csp2 = new MapColoringCSP(countries, colors, adjList, mrv, lcv, ac3);
 		sol = csp2.solve();

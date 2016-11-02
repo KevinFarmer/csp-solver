@@ -2,8 +2,6 @@ package csp;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Hashtable;
-import java.util.List;
 
 public class Constraint {
 	
@@ -75,5 +73,12 @@ public class Constraint {
 		//System.out.println("Returning true");
 		return true;
 	}
+	
+	
+	public HashSet<Pair> getConstraintList(Pair vars) {
+		return constraints.get(vars);
+	}
+	
+	
 
 }
