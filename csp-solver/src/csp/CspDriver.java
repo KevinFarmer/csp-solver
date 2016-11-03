@@ -70,14 +70,15 @@ public class CspDriver {
 
 		boolean mrv = false;
 		boolean lcv = false;
-		boolean ac3 = false;
+		boolean mac3 = true;
 		
 		long start, end;
 		int[] sol;
 		
+		/*
 		//With none
 		start = System.nanoTime();
-		ConstraintSatisfactionProblem csp2 = new MapColoringCSP(countries, colors, adjList, mrv, lcv, ac3);
+		ConstraintSatisfactionProblem csp2 = new MapColoringCSP(countries, colors, adjList, mrv, lcv, mac3);
 		sol = csp2.solve();
 		end = System.nanoTime();
 		System.out.println("\nTime(ns): "+(end-start));
@@ -85,25 +86,46 @@ public class CspDriver {
 			System.out.println("Failed!");
 			return;
 		} else {
-			System.out.println("MRV: "+mrv+",  LCV: "+lcv+",  AC-3: "+ac3);
 			csp2.printAssignment(sol);
-		}		
+		}	*/	
 
 		
-		System.out.println();
-		int w = 4, h = 4;
-		int num = 2;
+		/*
+		int w = 10, h = 3;
+		int num = 4;
 		Pair[] circuits = new Pair[num];
-		circuits[0] = new Pair(2, 2);
-		circuits[1] = new Pair(3, 1);
-		//circuits[2] = new Pair(1, 4);
+		circuits[0] = new Pair(3, 2);
+		circuits[1] = new Pair(5, 2);
+		circuits[2] = new Pair(2, 3);
+		circuits[3] = new Pair(7, 1);
+		*/
+		int w = 30, h = 12;
+		int num = 10;
+		Pair[] circuits = new Pair[num];
+		circuits[0] = new Pair(3, 2);
+		circuits[1] = new Pair(5, 2);
+		circuits[2] = new Pair(2, 3);
+		circuits[3] = new Pair(7, 5);
+		circuits[4] = new Pair(4, 9);
+		circuits[5] = new Pair(10, 10);
+		circuits[6] = new Pair(10, 1);
+		circuits[7] = new Pair(4, 1);
+		circuits[8] = new Pair(7, 1);
+		circuits[9] = new Pair(2, 6);
 		
+		start = System.currentTimeMillis();
 		ConstraintSatisfactionProblem csp = 
-				new CircuitBoardCSP(w, h, circuits, num, mrv, lcv, ac3);
-		
+				new CircuitBoardCSP(w, h, circuits, num, mrv, lcv, mac3);
+
 		System.out.println("----------------------------------------------------------");
 		int[] ret = csp.solve();
-		csp.printAssignment(ret);
+		end = System.currentTimeMillis();
+		System.out.println("\nTime(ms): "+(end-start));
+		
+		if (ret == null)
+			System.out.println("Failed");
+		else
+			csp.printAssignment(ret);
 		
 	}
 	

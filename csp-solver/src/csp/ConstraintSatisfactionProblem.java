@@ -22,29 +22,69 @@ public abstract class ConstraintSatisfactionProblem {
 	protected int numVar, numVal;
 
 	Constraint allConstraints;
-	HashMap<Integer, List<Integer>> domains;
+	HashMap<Integer, List<Integer>> initDomains;
+
 	
 	
 	// Return a valid assignment, or null if none can be found
 	public int[] solve() {
-		
+		System.out.println("MRV: "+mrv+",  LCV: "+lcv+",  MAC-3: "+mac3);
 		buildConstraints();
 		
 		int[] assignment = new int[numVar];
 		for (int i = 0; i < numVar; i++)
 			assignment[i] = UNASSIGNED;
 		
-		//For testing only
-		List<Integer> dm = domains.get(3);
-		//dm.remove(0);
 		
-		return recursiveBacktrackSolver(assignment, 0);
+		//For testing only
+		//List<Integer> dm = initDomains.get(3);
+		//dm.remove(0);
+		/*
+		for(int var : initDomains.keySet()) {
+			for (int val : initDomains.get(var)) {
+				System.out.print(val+" ");
+			}
+			System.out.println();
+		} */
+		
+		HashMap<Integer, List<Integer>> domains = copyDomains(initDomains);
+		/*
+		System.out.println("After copy: ");
+		for(int var : domains.keySet()) {
+			for (int val : domains.get(var)) {
+				System.out.print(val+" ");
+			}
+			System.out.println();
+		}
 
+		System.out.println("here");
+		*/
+		
+		return recursiveBacktrackSolver(assignment, 0, domains);
 	}
 
 
+
+	//Creates a copy of the domain Hashmap passed in
+	private HashMap<Integer, List<Integer>> copyDomains(HashMap<Integer, List<Integer>> domainToCopy) {
+		HashMap<Integer, List<Integer>> domains = new HashMap<Integer, List<Integer>>();
+		
+		for(int var : domainToCopy.keySet()) {
+			List<Integer> vals = new ArrayList<Integer>();
+			for (int val : domainToCopy.get(var)) {
+				vals.add(val);
+			}
+			domains.put(var, vals);
+		}
+		
+		return domains;
+	}
+
+
+
+
 	//A recursive DFS through the search tree
-	private int[] recursiveBacktrackSolver(int[] assignment, int totalAssigned) {
+	private int[] recursiveBacktrackSolver(int[] assignment, int totalAssigned, HashMap<Integer, List<Integer>> domains) {
 		//System.out.println("Recurse");
 		
 		if (totalAssigned == numVar) {
@@ -54,37 +94,37 @@ public abstract class ConstraintSatisfactionProblem {
 		
 		int varToAssign;
 		if (mrv)
-			varToAssign = getMrvVar(assignment);
+			varToAssign = getMrvVar(assignment, domains);
 		else
 			varToAssign = getNextVar(assignment);
 		
-		//System.out.println("varToAssign:  "+varToAssign);
 		
-		System.out.println("\nVar: "+varToAssign + "   totalAssign: "+totalAssigned);
+		//System.out.println("\nVar: "+varToAssign + "   totalAssign: "+totalAssigned);
 		
 		List<Integer> domainBeforeAssign = domains.get(varToAssign);
 		List<Integer> domain;
 		
-		System.out.println("Domain before assign:");
+		/*System.out.println("Var: "+varToAssign+", Domain before assign:");
 		for (int val : domainBeforeAssign)
 			System.out.print(val+" ");
-		System.out.println();
+		System.out.println(); */
 		
 		
 		if (lcv) {
-			System.out.print("Before sort: ");
+			/*System.out.print("Before sort: ");
 			for (int val : domainBeforeAssign)
 				System.out.print(val+" ");
 			System.out.println();
+			*/
+			sortByLCV(domainBeforeAssign, varToAssign, domains);
 			
-			sortByLCV(domainBeforeAssign, varToAssign);
-			
-			System.out.print("After sort: ");
+			/*System.out.print("After sort: ");
 			for (int val : domainBeforeAssign)
 				System.out.print(val+" ");
-			System.out.println();
+			System.out.println(); */
 		}
 
+		System.out.println("\nvar: "+varToAssign);
 		
 		//Assign value to variable
 		//int value;
@@ -95,30 +135,26 @@ public abstract class ConstraintSatisfactionProblem {
 			
 			assignment[varToAssign] = val;
 			
+			System.out.println("Assigned: "+val);
+			
 			//After making an assignment, set the domain to be that value
 			domain = new ArrayList<Integer>();
 			domain.add(val);
 			domains.put(varToAssign, domain);
-			
-			//for (int j = 0; j < numVar; j++)
-			//	System.out.print(assignment[j] +" ");
-			//System.out.println();
+
 			
 			//If this assignment is not valid, then do not recurse
 			
 			if ( !allConstraints.isSatisfied(assignment, varToAssign) ) {
-				//assignment[varToAssign] = UNASSIGNED;
-				//System.out.println();
-				
 				continue;
 			}
 			
-			for (int v : domains.get(varToAssign))
+			/*for (int v : domains.get(varToAssign))
 				System.out.print("-- "+v);
-			System.out.println();
+			System.out.println(); */
 			
 			if (mac3) {
-				if (!runMAC3(varToAssign)) {
+				if (!runMAC3(assignment, varToAssign, domains)) {
 						//If AC-3 fails
 					assignment[varToAssign] = UNASSIGNED;
 					domain = domainBeforeAssign; //Reverse changes to domain
@@ -127,7 +163,7 @@ public abstract class ConstraintSatisfactionProblem {
 			}
 			
 			
-			int[] sol = recursiveBacktrackSolver(assignment, totalAssigned+1);
+			int[] sol = recursiveBacktrackSolver(assignment, totalAssigned+1, copyDomains(domains));
 			if (sol != null) {
 				return sol;
 			}
@@ -138,14 +174,14 @@ public abstract class ConstraintSatisfactionProblem {
 		assignment[varToAssign] = UNASSIGNED;
 		domain = domainBeforeAssign; //Reverse changes to domain
 		
-		System.out.println("Returning null");
+		//System.out.println("Returning null");
 		return null;
 	}
 
 	
 
 
-	private void sortByLCV(List<Integer> domain, int varToAssign) {
+	private void sortByLCV(List<Integer> domain, int varToAssign, HashMap<Integer, List<Integer>> domains) {
 		// TODO Auto-generated method stub
 		
 		int[] numAdj = new int[numVal];
@@ -181,8 +217,6 @@ public abstract class ConstraintSatisfactionProblem {
 	//Returns the next variable sequentially
 	private int getNextVar(int[] assignment) {
 		for (int i = 0; i < numVar; i++) {
-			System.out.println("=="+assignment[i]);
-		
 			if (assignment[i] == UNASSIGNED)
 				return i;
 		}
@@ -191,8 +225,8 @@ public abstract class ConstraintSatisfactionProblem {
 
 
 	//Returns the unassigned variable with the minimum remaining values
-	private int getMrvVar(int[] assignment) {
-		// TODO Auto-generated method stub
+	private int getMrvVar(int[] assignment, HashMap<Integer, List<Integer>> domains) {
+		
 		int var = 0;
 		int num;
 		int min = Integer.MAX_VALUE;
@@ -208,24 +242,31 @@ public abstract class ConstraintSatisfactionProblem {
 				var = i;
 			}
 		}
-		System.out.println(min+": "+var);
+		//System.out.println(min+": "+var);
 		return var;
 	}
 	
 	
 	
-	private boolean runMAC3(int var) {
+	private boolean runMAC3(int[] assignment, int var, HashMap<Integer, List<Integer>> domains) {
 		
 		System.out.println("Running AC-3");
+		
+		for (int v : domains.keySet())
+				System.out.print(domains.get(v).size()+ " ");
+		System.out.println();
 		
 		LinkedList<Pair> queue = new LinkedList<Pair>();
 		
 		//Add all arcs to queue that point to var
 		for (int i = 0; i < numVar; i++) {
-				Pair arc = new Pair(i, var);
-				if (allConstraints.getConstraintList(arc) != null) {
-					queue.add(arc);
-				}
+			if (assignment[i] != UNASSIGNED)
+				continue;
+			Pair arc = new Pair(i, var);
+			if (allConstraints.getConstraintList(arc) != null) {
+				queue.add(arc);
+				//System.out.println(arc);
+			}
 		}
 		
 		//Pop all arcs, enforce consistency
@@ -233,12 +274,10 @@ public abstract class ConstraintSatisfactionProblem {
 			Pair arc = queue.poll();
 			int var1 = arc.getV1();
 			int var2 = arc.getV2();
-			System.out.println(var1+"--"+var2);
+			//System.out.println("-----------------------------"+var1+"--"+var2);
 			
 			List<Integer> domain1 = domains.get(var1);
 			List<Integer> domain2 = domains.get(var2);
-			
-			//List<Integer> temp = domain1;
 			
 			HashSet<Pair> constrains = allConstraints.getConstraintList(arc);
 			
@@ -249,19 +288,22 @@ public abstract class ConstraintSatisfactionProblem {
 			while (iter.hasNext()) {
 				int val1 = iter.next();
 				boolean hasLegalPairing = false;
+				//System.out.println("val1: "+val1);
 				
 				//check if some valid pairing in domain2
 				for (int val2 : domain2) {
+					//System.out.print(val2+" ");
 					Pair vals = new Pair(val1, val2);
 					if (constrains.contains(vals))
 						hasLegalPairing = true;
 				}
+				//System.out.println();
 				
 				//If not consistent for this val1 in domain1, then remove val1
 				if (!hasLegalPairing) {
 					iter.remove();
 					madeDeletion = true;
-					System.out.println("Deleting: "+var1+"  "+val1);
+					//System.out.println("Deleting: var:"+var1+"  val:"+val1);
 				}
 				
 			}
@@ -287,13 +329,6 @@ public abstract class ConstraintSatisfactionProblem {
 	}
 	
 	
-	/*
-	//Returns the value that rules out as few values for adjacent variables as possible
-	private int getLeastConstrainingVal(int[] assignment, int varToAssign) {
-		
-		return 0;
-	}
-	*/
 	
 
 	//Must create a Constraint and assign it to allConstraints

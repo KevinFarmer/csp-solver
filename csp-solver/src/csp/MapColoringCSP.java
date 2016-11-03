@@ -52,12 +52,12 @@ public class MapColoringCSP extends ConstraintSatisfactionProblem {
 		}
 		*/
 		
-		domains = new HashMap<Integer, List<Integer>>();
+		initDomains = new HashMap<Integer, List<Integer>>();
 		for (int i = 0; i < numVar; i++) {
 			List<Integer> vals = new ArrayList<Integer>();
 			for (int j = 0; j < numVal; j++)
 				vals.add(j);
-			domains.put(i, vals);
+			initDomains.put(i, vals);
 		}
 		
 	}

@@ -37,12 +37,11 @@ public class CircuitBoardCSP extends ConstraintSatisfactionProblem {
 		super.mac3 = mac3;
 		
 		
-		//Create the domain for each circuit
-		domains = new HashMap<Integer, List<Integer>>();
+		initDomains = new HashMap<Integer, List<Integer>>();
 		for (int i = 0; i < numVar; i++) {
 			Pair circuit = circuits[i];
 			List<Integer> vals = new ArrayList<Integer>();
-			
+						
 			for (int y = 0; y <= (height-circuit.v2); y++) {
 				for (int x = 0; x <= (width-circuit.v1); x++) {
 					int val = coordToVal(x, y);
@@ -55,12 +54,16 @@ public class CircuitBoardCSP extends ConstraintSatisfactionProblem {
 				//System.out.println();
 			}
 			//System.out.println();
-			domains.put(i, vals);
+			initDomains.put(i, vals);
 		}
+		
+
 		
 		
 		
 	}
+	
+	
 	
 	/* 
 	 *   -Converting a (x,y) to a value and back
@@ -85,7 +88,7 @@ public class CircuitBoardCSP extends ConstraintSatisfactionProblem {
 	}
 	
 	private int[] valToCoord(int val) {
-		int x = val % height;
+		int x = val % width;
 		int y = val / width;
 		int coord[] = {x, y};
 		return coord;
@@ -106,8 +109,8 @@ public class CircuitBoardCSP extends ConstraintSatisfactionProblem {
 					continue;
 				
 				Pair pair = new Pair(i, j);
-				List<Integer> domain1 = domains.get(i);
-				List<Integer> domain2 = domains.get(j);
+				List<Integer> domain1 = initDomains.get(i);
+				List<Integer> domain2 = initDomains.get(j);
 				
 				HashSet<Pair> validValues = new HashSet<Pair>();
 				for (int val1 : domain1) {
@@ -116,7 +119,7 @@ public class CircuitBoardCSP extends ConstraintSatisfactionProblem {
 						Pair vals = new Pair(val1, val2);
 						if (isValidPair(pair, vals)) {
 							validValues.add(vals);
-							System.out.println(pair+" ->  "+vals);
+							//System.out.println(pair+" ->  "+vals);
 						}
 						
 					}
@@ -186,6 +189,7 @@ public class CircuitBoardCSP extends ConstraintSatisfactionProblem {
 			int[] coord = valToCoord(val);
 			
 			//System.out.println(val);
+			//System.out.println("x: "+coord[0]+"  y: "+coord[1]);
 			//System.out.println("w: "+w+" h:"+h);
 			
 			//Mark that area for circuit
