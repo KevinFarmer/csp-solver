@@ -155,7 +155,7 @@ public abstract class ConstraintSatisfactionProblem {
 			
 			if (mac3) {
 				if (!runMAC3(assignment, varToAssign, domains)) {
-						//If AC-3 fails
+					//If MAC-3 fails
 					assignment[varToAssign] = UNASSIGNED;
 					domain = domainBeforeAssign; //Reverse changes to domain
 					return null; 
@@ -250,15 +250,15 @@ public abstract class ConstraintSatisfactionProblem {
 	
 	private boolean runMAC3(int[] assignment, int var, HashMap<Integer, List<Integer>> domains) {
 		
-		System.out.println("Running AC-3");
+		//System.out.println("Running AC-3");
 		
-		for (int v : domains.keySet())
-				System.out.print(domains.get(v).size()+ " ");
-		System.out.println();
+		//for (int v : domains.keySet())
+		//		System.out.print(domains.get(v).size()+ " ");
+		//System.out.println();
 		
 		LinkedList<Pair> queue = new LinkedList<Pair>();
 		
-		//Add all arcs to queue that point to var
+		//Add arcs to queue that point to var
 		for (int i = 0; i < numVar; i++) {
 			if (assignment[i] != UNASSIGNED)
 				continue;
