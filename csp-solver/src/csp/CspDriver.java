@@ -99,7 +99,9 @@ public class CspDriver {
 		circuits[2] = new Pair(2, 3);
 		circuits[3] = new Pair(7, 1);
 		*/
-		int w = 30, h = 12;
+		
+		int w = 30, h = 10;
+		//int w = 10, h = 10;
 		int num = 10;
 		Pair[] circuits = new Pair[num];
 		circuits[0] = new Pair(3, 2);
@@ -121,6 +123,7 @@ public class CspDriver {
 		int[] ret = csp.solve();
 		end = System.currentTimeMillis();
 		System.out.println("\nTime(ms): "+(end-start));
+		csp.printStats();
 		
 		if (ret == null)
 			System.out.println("Failed");

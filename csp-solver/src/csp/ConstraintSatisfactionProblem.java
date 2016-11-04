@@ -16,6 +16,9 @@ public abstract class ConstraintSatisfactionProblem {
 
 	protected int UNASSIGNED = -1;
 	
+	private int valsDeleted = 0;
+	private int totalAssignments = 0;
+	
 	protected boolean mrv, lcv, mac3; //Whether or not to use these
 	//Minimum remaining value, least-constraining value, and MAC-3 algorithm
 	
@@ -111,20 +114,10 @@ public abstract class ConstraintSatisfactionProblem {
 		
 		
 		if (lcv) {
-			/*System.out.print("Before sort: ");
-			for (int val : domainBeforeAssign)
-				System.out.print(val+" ");
-			System.out.println();
-			*/
 			sortByLCV(domainBeforeAssign, varToAssign, domains);
-			
-			/*System.out.print("After sort: ");
-			for (int val : domainBeforeAssign)
-				System.out.print(val+" ");
-			System.out.println(); */
 		}
 
-		System.out.println("\nvar: "+varToAssign);
+		//System.out.println("\nvar: "+varToAssign);
 		
 		//Assign value to variable
 		//int value;
@@ -134,8 +127,9 @@ public abstract class ConstraintSatisfactionProblem {
 			int val = (int) iter.next();
 			
 			assignment[varToAssign] = val;
+			totalAssignments++;
 			
-			System.out.println("Assigned: "+val);
+			//System.out.println("Assigned: "+val);
 			
 			//After making an assignment, set the domain to be that value
 			domain = new ArrayList<Integer>();
@@ -143,9 +137,18 @@ public abstract class ConstraintSatisfactionProblem {
 			domains.put(varToAssign, domain);
 
 			
-			//If this assignment is not valid, then do not recurse
-			
-			if ( !allConstraints.isSatisfied(assignment, varToAssign) ) {
+			//With MAC-3 correctly implemented we never choose a partial assignment that
+			//does not satisfy the constraints, so don't need to check if satisfied
+			if (mac3) {
+				if (!runMAC3(assignment, varToAssign, domains)) {
+					//If MAC-3 fails
+					assignment[varToAssign] = UNASSIGNED;
+					domain = domainBeforeAssign; //Reverse changes to domain
+					continue; 
+				}
+			} else if ( !allConstraints.isSatisfied(assignment, varToAssign) ) {
+				assignment[varToAssign] = UNASSIGNED;
+				domain = domainBeforeAssign; //Reverse changes to domain
 				continue;
 			}
 			
@@ -153,14 +156,7 @@ public abstract class ConstraintSatisfactionProblem {
 				System.out.print("-- "+v);
 			System.out.println(); */
 			
-			if (mac3) {
-				if (!runMAC3(assignment, varToAssign, domains)) {
-					//If MAC-3 fails
-					assignment[varToAssign] = UNASSIGNED;
-					domain = domainBeforeAssign; //Reverse changes to domain
-					return null; 
-				}
-			}
+
 			
 			
 			int[] sol = recursiveBacktrackSolver(assignment, totalAssigned+1, copyDomains(domains));
@@ -303,6 +299,7 @@ public abstract class ConstraintSatisfactionProblem {
 				if (!hasLegalPairing) {
 					iter.remove();
 					madeDeletion = true;
+					valsDeleted++;
 					//System.out.println("Deleting: var:"+var1+"  val:"+val1);
 				}
 				
@@ -328,7 +325,10 @@ public abstract class ConstraintSatisfactionProblem {
 		
 	}
 	
-	
+	public void printStats() {
+		System.out.println("Assignments visited: "+totalAssignments);
+		System.out.println("Values deleted from domains: "+valsDeleted);
+	}
 	
 
 	//Must create a Constraint and assign it to allConstraints
