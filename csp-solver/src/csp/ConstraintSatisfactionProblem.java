@@ -178,7 +178,6 @@ public abstract class ConstraintSatisfactionProblem {
 
 
 	private void sortByLCV(List<Integer> domain, int varToAssign, HashMap<Integer, List<Integer>> domains) {
-		// TODO Auto-generated method stub
 		
 		int[] numAdj = new int[numVal];
 		for (int i = 0; i < numAdj.length; i++)
