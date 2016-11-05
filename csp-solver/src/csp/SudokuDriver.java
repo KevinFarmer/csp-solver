@@ -7,10 +7,10 @@ public class SudokuDriver {
 	
 	public static void main(String[] args) {
 		
-		boolean easy = false; // ----------- Change for different board ---------
-		//If ease = false, then run with either MRV or MAC-3 enabled or it is very slow
+		boolean easy = true; // ----------- Change for different board ---------
+		//If easy = false, then run with either MRV or MAC-3 enabled or it is very slow
 		
-		boolean mrv = false;
+		boolean mrv = true;
 		boolean lcv = false;
 		boolean mac3 = false;
 		

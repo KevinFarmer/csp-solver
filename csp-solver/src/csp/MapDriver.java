@@ -70,7 +70,7 @@ public class MapDriver {
 
 		boolean mrv = false;
 		boolean lcv = false;
-		boolean mac3 = true;
+		boolean mac3 = false;
 		
 		long start, end;
 		

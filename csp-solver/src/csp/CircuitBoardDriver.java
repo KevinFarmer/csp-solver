@@ -9,7 +9,7 @@ public class CircuitBoardDriver {
 		boolean lcv = false;
 		boolean mac3 = false;
 		
-		boolean simple = false; //-------------- Change for different example --------------
+		boolean simple = true; //-------------- Change for different example --------------
 		
 		Pair[] circuits;
 		int num, w , h;
