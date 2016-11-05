@@ -45,15 +45,9 @@ public class CircuitBoardCSP extends ConstraintSatisfactionProblem {
 			for (int y = 0; y <= (height-circuit.v2); y++) {
 				for (int x = 0; x <= (width-circuit.v1); x++) {
 					int val = coordToVal(x, y);
-					//if (val < 10)
-						//System.out.print(" "+val+",");
-					//else
-						//System.out.print(val+",");
 					vals.add(val);
 				}
-				//System.out.println();
 			}
-			//System.out.println();
 			initDomains.put(i, vals);
 		}
 		
@@ -152,11 +146,6 @@ public class CircuitBoardCSP extends ConstraintSatisfactionProblem {
 		
 		boolean xOverlap = false, yOverlap = false;
 		
-		// (Start1x   <=     End2x)        and       (End1x       >=     Start2x)
-		/* if (coord1[0] < coord2[0]+circ2.v1 && coord1[0]+circ1.v1 >= coord2[0])
-			xOverlap = true;
-		if (coord1[1] < coord2[1]+circ2.v2 && coord1[1]+circ1.v2 >= coord2[1])
-			yOverlap = true; */
 		if (x1start <= x2end && x1end >= x2start)
 			xOverlap = true;
 		if (y1start <= y2end && y1end >= y2start)

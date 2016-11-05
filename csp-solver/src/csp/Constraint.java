@@ -21,40 +21,32 @@ public class Constraint {
 	//Args: the current assignment, the variable that was just updated
 	public boolean isSatisfied(int[] assignment, int var) {
 		
-		//System.out.println("Constraint check: " +var);
-		
 		for (int i = 0; i < numVar; i++) {
-			//System.out.println(var+" "+i);
 			if (var == i || assignment[i] == UNASSIGNED)
 				continue;
 			
 			Pair vars = new Pair(var, i);// {var, i};
-			Pair vals = new Pair(assignment[var], assignment[i]);// {assignment[var], assignment[i]};
-			//System.out.println(vars+"   "+vals);
+			Pair vals = new Pair(assignment[var], assignment[i]);
 			
 			HashSet<Pair> consts = constraints.get(vars);
 			
 			//If not adjacent, continue
 			if (consts == null) {
-				//System.out.println("Pair not adjacent");
 				continue;
 			}
 			
 			if (!consts.contains(vals)) {
-				//System.out.println("false2");
 				return false;
 			}
 		}
 		
-		//System.out.println("--");
 		
 		for (int i = 0; i < numVar; i++) {
 			if (var == i || assignment[i] == UNASSIGNED)
 				continue;
 			
-			Pair vars = new Pair(i, var);// {i, var};
+			Pair vars = new Pair(i, var);
 			Pair vals = new Pair(assignment[i], assignment[var]);
-			//System.out.println(vars+"   "+vals);
 			
 			HashSet<Pair> consts = constraints.get(vars);
 			
@@ -70,11 +62,10 @@ public class Constraint {
 			}
 		}
 		
-		//System.out.println("Returning true");
 		return true;
 	}
 	
-	
+	//Returns the list of constraints for a pair of values
 	public HashSet<Pair> getConstraintList(Pair vars) {
 		return constraints.get(vars);
 	}

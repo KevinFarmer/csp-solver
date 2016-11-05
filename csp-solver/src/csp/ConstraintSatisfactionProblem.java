@@ -1,16 +1,13 @@
 package csp;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
 public abstract class ConstraintSatisfactionProblem {
 
@@ -25,9 +22,8 @@ public abstract class ConstraintSatisfactionProblem {
 	protected int numVar, numVal;
 
 	Constraint allConstraints;
-	HashMap<Integer, List<Integer>> initDomains;
+	HashMap<Integer, List<Integer>> initDomains; //Set by child class
 
-	
 	
 	// Return a valid assignment, or null if none can be found
 	public int[] solve() {
@@ -38,37 +34,14 @@ public abstract class ConstraintSatisfactionProblem {
 		for (int i = 0; i < numVar; i++)
 			assignment[i] = UNASSIGNED;
 		
-		
-		//For testing only
-		//List<Integer> dm = initDomains.get(3);
-		//dm.remove(0);
-		/*
-		for(int var : initDomains.keySet()) {
-			for (int val : initDomains.get(var)) {
-				System.out.print(val+" ");
-			}
-			System.out.println();
-		} */
-		
 		HashMap<Integer, List<Integer>> domains = copyDomains(initDomains);
-		/*
-		System.out.println("After copy: ");
-		for(int var : domains.keySet()) {
-			for (int val : domains.get(var)) {
-				System.out.print(val+" ");
-			}
-			System.out.println();
-		}
-
-		System.out.println("here");
-		*/
 		
 		return recursiveBacktrackSolver(assignment, 0, domains);
 	}
 
 
 
-	//Creates a copy of the domain Hashmap passed in
+	//Creates a copy of the domain HashMap passed in
 	private HashMap<Integer, List<Integer>> copyDomains(HashMap<Integer, List<Integer>> domainToCopy) {
 		HashMap<Integer, List<Integer>> domains = new HashMap<Integer, List<Integer>>();
 		
@@ -87,8 +60,7 @@ public abstract class ConstraintSatisfactionProblem {
 
 
 	//A recursive DFS through the search tree
-	private int[] recursiveBacktrackSolver(int[] assignment, int totalAssigned, HashMap<Integer, List<Integer>> domains) {
-		//System.out.println("Recurse");
+	private int[] recursiveBacktrackSolver(int[] assignment, int totalAssigned, HashMap<Integer, List<Integer>> initDomains) {
 		
 		if (totalAssigned == numVar) {
 			System.out.println("Found solution");
@@ -97,39 +69,27 @@ public abstract class ConstraintSatisfactionProblem {
 		
 		int varToAssign;
 		if (mrv)
-			varToAssign = getMrvVar(assignment, domains);
+			varToAssign = getMrvVar(assignment, initDomains);
 		else
 			varToAssign = getNextVar(assignment);
 		
-		
-		//System.out.println("\nVar: "+varToAssign + "   totalAssign: "+totalAssigned);
-		
+		HashMap<Integer, List<Integer>> domains = copyDomains(initDomains);
 		List<Integer> domainBeforeAssign = domains.get(varToAssign);
 		List<Integer> domain;
 		
-		/*System.out.println("Var: "+varToAssign+", Domain before assign:");
-		for (int val : domainBeforeAssign)
-			System.out.print(val+" ");
-		System.out.println(); */
-		
-		
+
 		if (lcv) {
 			sortByLCV(domainBeforeAssign, varToAssign, domains);
 		}
-
-		//System.out.println("\nvar: "+varToAssign);
+		
 		
 		//Assign value to variable
-		//int value;
 		Iterator<Integer> iter = domainBeforeAssign.iterator();
 		while(iter.hasNext()) {
-		//for (int val : domain) {
 			int val = (int) iter.next();
 			
 			assignment[varToAssign] = val;
 			totalAssignments++;
-			
-			//System.out.println("Assigned: "+val);
 			
 			//After making an assignment, set the domain to be that value
 			domain = new ArrayList<Integer>();
@@ -137,54 +97,50 @@ public abstract class ConstraintSatisfactionProblem {
 			domains.put(varToAssign, domain);
 
 			
-			//With MAC-3 correctly implemented we never choose a partial assignment that
-			//does not satisfy the constraints, so don't need to check if satisfied
-			if (mac3) {
-				if (!runMAC3(assignment, varToAssign, domains)) {
-					//If MAC-3 fails
-					assignment[varToAssign] = UNASSIGNED;
-					domain = domainBeforeAssign; //Reverse changes to domain
-					continue; 
-				}
-			} else if ( !allConstraints.isSatisfied(assignment, varToAssign) ) {
+			//Check for conflict
+			if ( !allConstraints.isSatisfied(assignment, varToAssign) ) {
 				assignment[varToAssign] = UNASSIGNED;
-				domain = domainBeforeAssign; //Reverse changes to domain
+				if (mac3)
+					domains = copyDomains(initDomains);
 				continue;
 			}
 			
-			/*for (int v : domains.get(varToAssign))
-				System.out.print("-- "+v);
-			System.out.println(); */
+			if (mac3) {
+				if (!runMAC3(assignment, varToAssign, domains)) {
+					//If MAC-3 fails
+					domains = copyDomains(initDomains);
+					assignment[varToAssign] = UNASSIGNED;
+					continue; 
+				}
+			} 
 			
 
-			
-			
-			int[] sol = recursiveBacktrackSolver(assignment, totalAssigned+1, copyDomains(domains));
+			int[] sol = recursiveBacktrackSolver(assignment, totalAssigned+1, domains);
 			if (sol != null) {
 				return sol;
 			}
 			
-			//System.out.println();
+			if (mac3)
+				domains = copyDomains(initDomains);
 		}
 		
 		assignment[varToAssign] = UNASSIGNED;
-		domain = domainBeforeAssign; //Reverse changes to domain
 		
-		//System.out.println("Returning null");
 		return null;
 	}
 
 	
 
-
+	//Sorts the domain so that the value that appears least in neighboring domains is first
 	private void sortByLCV(List<Integer> domain, int varToAssign, HashMap<Integer, List<Integer>> domains) {
+		HashSet<Pair> constraintList;
 		
-		int[] numAdj = new int[numVal];
+		int[] numAdj = new int[numVal+1]; //+1 b/c Sudoku values are offset by 1
 		for (int i = 0; i < numAdj.length; i++)
 			numAdj[i] = 0;
 		
 		for (int i = 0; i < numVar; i++) {
-			HashSet<Pair> constraintList = allConstraints.getConstraintList(new Pair(varToAssign, i));
+			constraintList = allConstraints.getConstraintList(new Pair(varToAssign, i));
 			if (constraintList == null) {
 				//then not adjacent
 				continue;
@@ -204,8 +160,6 @@ public abstract class ConstraintSatisfactionProblem {
 		        return (Integer.valueOf(numAdj[o1])).compareTo(numAdj[o2]);
 		    }
 		});
-		
-		
 	}
 
 
@@ -226,7 +180,7 @@ public abstract class ConstraintSatisfactionProblem {
 		int num;
 		int min = Integer.MAX_VALUE;
 		
-		for (int i = 0; i<numVar; i++) {
+		for (int i = 0; i < numVar; i++) {
 			if (assignment[i] != UNASSIGNED)
 				continue;
 			
@@ -237,19 +191,13 @@ public abstract class ConstraintSatisfactionProblem {
 				var = i;
 			}
 		}
-		//System.out.println(min+": "+var);
+
 		return var;
 	}
 	
 	
-	
+	//MAC-3 algorithm for constraint propagation
 	private boolean runMAC3(int[] assignment, int var, HashMap<Integer, List<Integer>> domains) {
-		
-		//System.out.println("Running AC-3");
-		
-		//for (int v : domains.keySet())
-		//		System.out.print(domains.get(v).size()+ " ");
-		//System.out.println();
 		
 		LinkedList<Pair> queue = new LinkedList<Pair>();
 		
@@ -269,7 +217,6 @@ public abstract class ConstraintSatisfactionProblem {
 			Pair arc = queue.poll();
 			int var1 = arc.getV1();
 			int var2 = arc.getV2();
-			//System.out.println("-----------------------------"+var1+"--"+var2);
 			
 			List<Integer> domain1 = domains.get(var1);
 			List<Integer> domain2 = domains.get(var2);
@@ -283,23 +230,19 @@ public abstract class ConstraintSatisfactionProblem {
 			while (iter.hasNext()) {
 				int val1 = iter.next();
 				boolean hasLegalPairing = false;
-				//System.out.println("val1: "+val1);
 				
 				//check if some valid pairing in domain2
 				for (int val2 : domain2) {
-					//System.out.print(val2+" ");
 					Pair vals = new Pair(val1, val2);
 					if (constrains.contains(vals))
 						hasLegalPairing = true;
 				}
-				//System.out.println();
 				
 				//If not consistent for this val1 in domain1, then remove val1
 				if (!hasLegalPairing) {
 					iter.remove();
 					madeDeletion = true;
 					valsDeleted++;
-					//System.out.println("Deleting: var:"+var1+"  val:"+val1);
 				}
 				
 			}
@@ -316,12 +259,9 @@ public abstract class ConstraintSatisfactionProblem {
 					}
 				}
 			}
-			
-			
 		}
 		
 		return true;
-		
 	}
 	
 	public void printStats() {
