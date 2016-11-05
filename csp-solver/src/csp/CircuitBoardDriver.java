@@ -9,7 +9,7 @@ public class CircuitBoardDriver {
 		boolean lcv = false;
 		boolean mac3 = false;
 		
-		boolean simple = false;
+		boolean simple = false; //-------------- Change for different example --------------
 		
 		Pair[] circuits;
 		int num, w , h;
@@ -45,7 +45,6 @@ public class CircuitBoardDriver {
 		ConstraintSatisfactionProblem csp = 
 				new CircuitBoardCSP(w, h, circuits, num, mrv, lcv, mac3);
 
-		System.out.println("----------------------------------------------------------");
 		int[] ret = csp.solve();
 		end = System.currentTimeMillis();
 		System.out.println("\nTime(ms): "+(end-start));

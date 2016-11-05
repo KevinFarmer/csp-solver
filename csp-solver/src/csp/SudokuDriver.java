@@ -7,7 +7,12 @@ public class SudokuDriver {
 	
 	public static void main(String[] args) {
 		
-		boolean easy = true;
+		boolean easy = false; // ----------- Change for different board ---------
+		//If ease = false, then run with either MRV or MAC-3 enabled or it is very slow
+		
+		boolean mrv = false;
+		boolean lcv = false;
+		boolean mac3 = false;
 		
 		int[][] board = new int[width][width];
 		for (int i = 0; i < width; i++) {
@@ -98,9 +103,6 @@ public class SudokuDriver {
 			board[8][7] = 9;
 		}
 		
-		boolean mrv = true;
-		boolean lcv = false;
-		boolean mac3 = false;
 		
 		long start = System.currentTimeMillis();
 		ConstraintSatisfactionProblem csp = new SudokuCSP(board, mrv, lcv, mac3);
@@ -112,9 +114,6 @@ public class SudokuDriver {
 		csp.printStats();
 		
 		if (sol != null) {
-			//for (int i = 0; i < sol.length; i++)
-			//	System.out.print(sol[i]+" ");
-			//System.out.println();
 			csp.printAssignment(sol);
 		} else {
 			System.out.println("Failed");

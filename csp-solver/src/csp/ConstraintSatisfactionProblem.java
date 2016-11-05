@@ -269,6 +269,74 @@ public abstract class ConstraintSatisfactionProblem {
 		System.out.println("Values deleted from domains: "+valsDeleted);
 	}
 	
+	
+	/*
+	private boolean runAC3(int[] assignment, HashMap<Integer, List<Integer>> domains) {
+		LinkedList<Pair> queue = new LinkedList<Pair>();
+		
+		//Add all arcs to queue
+		for (int i = 0; i < numVar; i++) {
+			for (int j = 0; j < numVar; j++) {
+				Pair arc = new Pair(i, j);
+				if (allConstraints.getConstraintList(arc) != null) {
+					queue.add(arc);
+				}
+			}
+		}
+		
+		//Pop all arcs, enforce consistency
+		while (!queue.isEmpty()) {
+			Pair arc = queue.poll();
+			int var1 = arc.getV1();
+			int var2 = arc.getV2();
+			
+			List<Integer> domain1 = domains.get(var1);
+			List<Integer> domain2 = domains.get(var2);
+			
+			HashSet<Pair> constrains = allConstraints.getConstraintList(arc);
+			
+			boolean madeDeletion = false;
+			
+			//For each value in the domain, check consistency
+			Iterator<Integer> iter = domain1.iterator();
+			while (iter.hasNext()) {
+				int val1 = iter.next();
+				boolean hasLegalPairing = false;
+				
+				//check if some valid pairing in domain2
+				for (int val2 : domain2) {
+					Pair vals = new Pair(val1, val2);
+					if (constrains.contains(vals))
+						hasLegalPairing = true;
+				}
+				
+				//If not consistent for this val1 in domain1, then remove val1
+				if (!hasLegalPairing) {
+					iter.remove();
+					madeDeletion = true;
+					valsDeleted++;
+				}
+				
+			}
+			
+			if (domain1.size() == 0)
+				return false;
+			
+			//If made a deletion, add all arcs pointing to var1 in arc
+			if (madeDeletion) {
+				for (int i = 0; i < numVar; i++) {
+					Pair newArc = new Pair(i, var1);
+					if (allConstraints.getConstraintList(newArc) != null) {
+						queue.add(newArc);
+					}
+				}
+			}
+		}
+		
+		return true;
+	} */
+	
+	
 
 	//Must create a Constraint and assign it to allConstraints
 	protected abstract void buildConstraints();	

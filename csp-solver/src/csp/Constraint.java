@@ -5,7 +5,6 @@ import java.util.HashSet;
 
 public class Constraint {
 	
-	//protected Hashtable<int[], List<int[]>> constraints;
 	private int UNASSIGNED = -1;
 	
 	HashMap<Pair, HashSet<Pair>> constraints;

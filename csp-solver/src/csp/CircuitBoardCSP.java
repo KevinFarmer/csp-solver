@@ -177,18 +177,13 @@ public class CircuitBoardCSP extends ConstraintSatisfactionProblem {
 			int h = circuits[i].v2;
 			int[] coord = valToCoord(val);
 			
-			//System.out.println(val);
-			//System.out.println("x: "+coord[0]+"  y: "+coord[1]);
-			//System.out.println("w: "+w+" h:"+h);
 			
 			//Mark that area for circuit
 			for (int x = coord[0]; x < coord[0]+w; x++) {
 				for (int y = coord[1]; y < coord[1]+h; y++) {
-					//System.out.println("x,y: "+x+","+y);
 					board[x][y] = i;
 				}
 			}
-			//System.out.println();
 		}
 		
 		//Print the board
