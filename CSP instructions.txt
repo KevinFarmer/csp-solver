@@ -1,0 +1,6 @@
+In order to run the three problems, I included three separate driver class: MapDriver, CircuitBoardDriver and SudokuDriver. Just run them for the three corresponding problems. 
+
+In CircuitBoardDriver, change the boolean simple that is marked to switch between the two examples.
+
+They same goes in SudokuDriver for the boolean easy.
+
