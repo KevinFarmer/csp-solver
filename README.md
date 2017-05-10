@@ -7,10 +7,10 @@ This repo contains a solver for a number of constraint-satisfaction problems, su
 
 ### To Run
 
-In order to run the three problems, I included three separate driver class: MapDriver, CircuitBoardDriver and SudokuDriver. Just run them for the three corresponding problems. 
+In order to run the three problems, I included three separate driver class: MapDriver, CircuitBoardDriver and SudokuDriver. Just run them in Eclipse for the three corresponding problems. 
 
-In CircuitBoardDriver, change the boolean simple that is marked to switch between the two examples.
+In CircuitBoardDriver, change the boolean ```simple``` that is marked to switch between the two examples.
 
-They same goes in SudokuDriver for the boolean easy.
+Do the same in SudokuDriver for the boolean ```easy```.
 
 
